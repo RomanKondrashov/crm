@@ -89,4 +89,25 @@ const renderGoods = (arr) => {
     arr.forEach(element => createRow(element));
 }
 
+const btnAdd = document.querySelector('.panel__add-goods');
+const formOverlay = document.querySelector('.overlay');
+const formClose = document.querySelector('.modal__close');
+const modalOverlay = document.querySelector('.overlay__modal');
+
+btnAdd.addEventListener('click', () => {
+  formOverlay.classList.add('active');
+});
+
+modalOverlay.addEventListener('click', event => {
+  event.stopPropagation();
+});
+
+formClose.addEventListener('click', () => {
+  formOverlay.classList.remove('active');
+});
+
+formOverlay.addEventListener('click', () => {
+  formOverlay.classList.remove('active');
+});
+
 renderGoods(goods);
