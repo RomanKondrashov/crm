@@ -65,7 +65,7 @@ const createRow = (obj) => {
     placeToInsert.insertAdjacentHTML(
         'beforeend',
         `
-          <tr>
+          <tr  data-id="${obj.id}">
                 <td class="table__cell">${numberRow}</td>
                 <td class="table__cell table__cell_left table__cell_name" data-id="${obj.id}">
                   <span class="table__cell-id">id: ${obj.id}</span>
@@ -93,21 +93,34 @@ const btnAdd = document.querySelector('.panel__add-goods');
 const formOverlay = document.querySelector('.overlay');
 const formClose = document.querySelector('.modal__close');
 const modalOverlay = document.querySelector('.overlay__modal');
+const table = document.querySelector('.table__body');
+const tableRowDel = document.querySelector('.table__btn_del');
+
+table.addEventListener('click', e => {
+  if (e.target.closest('.table__btn_del')){
+    const elId = e.target.closest('tr').dataset.id;
+    const indexToDelete = goods.findIndex(el => el.id == elId);
+    goods.splice(indexToDelete , 1);
+    console.log(goods);
+    e.target.closest('tr').remove();
+  }
+});
 
 btnAdd.addEventListener('click', () => {
   formOverlay.classList.add('active');
 });
 
-modalOverlay.addEventListener('click', event => {
-  event.stopPropagation();
-});
 
 formClose.addEventListener('click', () => {
   formOverlay.classList.remove('active');
 });
 
-formOverlay.addEventListener('click', () => {
-  formOverlay.classList.remove('active');
+formOverlay.addEventListener('click', e => {
+  const target = e.target;
+  if (target === formOverlay){
+    formOverlay.classList.remove('active');
+  }
+  
 });
 
 renderGoods(goods);
