@@ -59,22 +59,22 @@ const goods = [
     }
   ]
 
-const createRow = (obj) => {
+const createRow = ({id, title, category, units, count, price}) => {
     const placeToInsert = document.querySelector('.goods__table .table__body');
     const numberRow = document.querySelectorAll('.goods__table .table__body tr').length + 1;
     placeToInsert.insertAdjacentHTML(
         'beforeend',
         `
-          <tr  data-id="${obj.id}">
+          <tr  data-id="${id}">
                 <td class="table__cell">${numberRow}</td>
-                <td class="table__cell table__cell_left table__cell_name" data-id="${obj.id}">
-                  <span class="table__cell-id">id: ${obj.id}</span>
-                  ${obj.title}</td>
-                <td class="table__cell table__cell_left">${obj.category}</td>
-                <td class="table__cell">${obj.units}</td>
-                <td class="table__cell">${obj.count}</td>
-                <td class="table__cell">${obj.price}</td>
-                <td class="table__cell">${obj.price * obj.count}</td>
+                <td class="table__cell table__cell_left table__cell_name" data-id="${id}">
+                  <span class="table__cell-id">id: ${id}</span>
+                  ${title}</td>
+                <td class="table__cell table__cell_left">${category}</td>
+                <td class="table__cell">${units}</td>
+                <td class="table__cell">${count}</td>
+                <td class="table__cell">${price}</td>
+                <td class="table__cell">${price * count}</td>
                 <td class="table__cell table__cell_btn-wrapper">
                   <button class="table__btn table__btn_pic"></button>
                   <button class="table__btn table__btn_edit"></button>
@@ -96,6 +96,10 @@ const modalOverlay = document.querySelector('.overlay__modal');
 const table = document.querySelector('.table__body');
 const tableRowDel = document.querySelector('.table__btn_del');
 
+const toggleForm = () => {
+  formOverlay.classList.toggle('active');
+}
+
 table.addEventListener('click', e => {
   if (e.target.closest('.table__btn_del')){
     const elId = e.target.closest('tr').dataset.id;
@@ -107,18 +111,18 @@ table.addEventListener('click', e => {
 });
 
 btnAdd.addEventListener('click', () => {
-  formOverlay.classList.add('active');
+  toggleForm();
 });
 
 
 formClose.addEventListener('click', () => {
-  formOverlay.classList.remove('active');
+  toggleForm();
 });
 
 formOverlay.addEventListener('click', e => {
   const target = e.target;
   if (target === formOverlay){
-    formOverlay.classList.remove('active');
+    toggleForm();
   }
   
 });
