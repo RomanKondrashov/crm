@@ -83,11 +83,22 @@ const createRow = ({id, title, category, units, count, price}) => {
               </tr>
          `
     );
-}
+};
+
 
 const renderGoods = (arr) => {
     arr.forEach(element => createRow(element));
 }
+
+const calculateCrmSum = (goods) => {
+  const sum = goods.reduce((accumulator, currentValue) => {
+    console.log(typeof currentValue.price);
+    return accumulator + currentValue.price*currentValue.count;
+    
+  }, 0);
+  return sum;
+}
+
 
 const btnAdd = document.querySelector('.panel__add-goods');
 const formOverlay = document.querySelector('.overlay');
@@ -95,25 +106,21 @@ const formClose = document.querySelector('.modal__close');
 const modalOverlay = document.querySelector('.overlay__modal');
 const table = document.querySelector('.table__body');
 const tableRowDel = document.querySelector('.table__btn_del');
+const vendor_id = document.querySelector('.vendor-code__id');
+const form = document.querySelector('.modal__form');
+const cms__total_price = document.querySelector('.cms__total-price');
+
+
+// form show-hide manipulations start
 
 const toggleForm = () => {
   formOverlay.classList.toggle('active');
+  vendor_id.textContent = Math.floor(Math.random() * 10000);
 }
-
-table.addEventListener('click', e => {
-  if (e.target.closest('.table__btn_del')){
-    const elId = e.target.closest('tr').dataset.id;
-    const indexToDelete = goods.findIndex(el => el.id == elId);
-    goods.splice(indexToDelete , 1);
-    console.log(goods);
-    e.target.closest('tr').remove();
-  }
-});
 
 btnAdd.addEventListener('click', () => {
   toggleForm();
 });
-
 
 formClose.addEventListener('click', () => {
   toggleForm();
@@ -125,6 +132,70 @@ formOverlay.addEventListener('click', e => {
     toggleForm();
   }
   
+});
+
+// form manipulations end
+
+// remove row
+table.addEventListener('click', e => {
+  if (e.target.closest('.table__btn_del')){
+    const elId = e.target.closest('tr').dataset.id;
+    const indexToDelete = goods.findIndex(el => el.id == elId);
+    goods.splice(indexToDelete , 1);
+    console.log(goods);
+    e.target.closest('tr').remove();
+  }
+});
+
+// submit event
+form.addEventListener('submit', e =>{
+  e.preventDefault();
+  
+  const formData = new FormData(e.target);
+  const newRow = Object.fromEntries(formData);
+  const objectToAdd = {
+      "id": vendor_id.textContent,
+      "title": newRow.name,
+      "price": parseFloat(newRow.price),
+      "description": newRow.description,
+      "category": newRow.category,
+      "discont": newRow.discount_count,
+      "count": parseInt(newRow.count),
+      "units": newRow.units,
+      "images": {
+        "small": "img/smrtxiaomi11t-m.jpg",
+        "big": "img/smrtxiaomi11t-b.jpg"
+      }
+  };
+  createRow(objectToAdd);
+  goods.push(objectToAdd);
+  console.warn(goods);
+  cms__total_price.textContent = `$ ${calculateCrmSum(goods)};`
+  toggleForm();
+});
+
+// change discount
+form.discount.addEventListener('change', e => {
+  if (form.discount.checked){
+    form.discount_count.disabled = false;
+  }else{
+    form.discount_count.value = '';
+    form.discount_count.disabled = true;
+  }
+});
+
+// generete sum in modal form
+const generateSum = (price, count) => {
+  if (price.value && count.value){
+    form.total.value = `$ ${price.value*count.value}`;
+  }
+};
+
+form.count.addEventListener('change', e => {
+  generateSum(form.price, form.count);
+});
+form.price.addEventListener('change', e => {
+  generateSum(form.price, form.count);
 });
 
 renderGoods(goods);
